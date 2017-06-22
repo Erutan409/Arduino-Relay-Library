@@ -1,6 +1,6 @@
 # Arduino-Relay-Library
 
-A way to simplify controllinga relay module board.
+A way to simplify controlling a relay module board.
 
 Example:
 
