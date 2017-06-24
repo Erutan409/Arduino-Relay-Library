@@ -31,14 +31,14 @@ RELAY_SIZE Relay::getSize(void) {
 Relay &Relay::setPin(int pinNumber, RELAY_NUM relay) {
 
     // don't allow any pin setting if alread initialized
-    if (this->_initialized || this->_translateRelayNumber(relay) > this->getSize()) {goto done;}
+    if (this->_initialized || this->_translateRelayNumber(&relay) > this->getSize()) {goto done;}
 
     // ensure the pin mode is set for output
     pinMode(pinNumber,OUTPUT);
     //digitalWrite(pinNumber,HIGH);
-    this->_pins[(this->_translateRelayNumber(relay) - 1)] = pinNumber;
+    this->_pins[(this->_translateRelayNumber(&relay) - 1)] = pinNumber;
     // set default state for pin
-    this->_futuePinState[(this->_translateRelayNumber(relay) - 1)] = HIGH_R;
+    this->_futuePinState[(this->_translateRelayNumber(&relay) - 1)] = OFF_R;
 
     done:
     return *this;
@@ -46,26 +46,26 @@ Relay &Relay::setPin(int pinNumber, RELAY_NUM relay) {
 }
 
 int *Relay::getPin(RELAY_NUM relay) {
-    return &this->_pins[(this->_translateRelayNumber(relay) - 1)];
+    return &this->_pins[(this->_translateRelayNumber(&relay) - 1)];
 }
 
 Relay &Relay::on(RELAY_NUM relay) {
-    return this->_toggle(relay, LOW_R);
+    return this->_toggle(relay, ON_R);
 }
 
 Relay &Relay::off(RELAY_NUM relay) {
-    return this->_toggle(relay, HIGH_R);
+    return this->_toggle(relay, OFF_R);
 }
 
 RELAY_STATE *Relay::getState(RELAY_NUM relay) {
-    return &this->_currentPinState[(this->_translateRelayNumber(relay) - 1)];
+    return &this->_currentPinState[(this->_translateRelayNumber(&relay) - 1)];
 }
 
 Relay &Relay::_toggle(RELAY_NUM relay, RELAY_STATE state) {
 
-    if (!this->_initialized || this->_translateRelayNumber(relay) > this->getSize()) {goto done;}
+    if (!this->_initialized || this->_translateRelayNumber(&relay) > this->getSize()) {goto done;}
 
-    this->_futuePinState[(this->_translateRelayNumber(relay) - 1)] = state;
+    this->_futuePinState[(this->_translateRelayNumber(&relay) - 1)] = state;
 
     done:
     return *this;
@@ -84,7 +84,7 @@ void Relay::commit(void) {
         if (c != f) {
 
             c = f;
-            digitalWrite(this->_pins[i],(c == HIGH_R? HIGH : LOW));
+            digitalWrite(this->_pins[i],(c == ON_R? LOW : HIGH));
 
         }
 
@@ -95,11 +95,11 @@ void Relay::commit(void) {
 
 }
 
-int Relay::_translateRelayNumber(RELAY_NUM relay) {
+int Relay::_translateRelayNumber(RELAY_NUM *relay) {
 
     int num;
 
-    switch (relay) {
+    switch (*relay) {
 
         case FIRST_R: num = 1; break;
         case SECOND_R: num = 2; break;
