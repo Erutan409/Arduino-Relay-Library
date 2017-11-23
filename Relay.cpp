@@ -12,7 +12,7 @@ bool Relay::initialize(void) {
 
     for (int i = 0; i < this->getSize(); i++) {
 
-        if (this->_pins[i] == NULL) {
+        if (this->_pins[i] == 0) {
             return false;
         }
 
