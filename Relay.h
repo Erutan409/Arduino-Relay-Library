@@ -51,7 +51,7 @@ class Relay {
     private:
         bool _initialized = false;
         RELAY_SIZE _size;
-        int _pins[16];
+        int _pins[16] = {0};
         RELAY_STATE _currentPinState[16];
         RELAY_STATE _futuePinState[16];
         int _translateRelayNumber(RELAY_NUM *relay);
