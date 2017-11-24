@@ -7,7 +7,7 @@ Relay::Relay(RELAY_SIZE size) {
 
 // instructs the object that it's ready to do work,
 // but first checks to make sure everything is
-// properly configured first
+// properly configured
 bool Relay::initialize(void) {
 
     for (int i = 0; i < this->getSize(); i++) {
