@@ -54,7 +54,7 @@ class Relay {
         int _pins[16] = {0};
         RELAY_STATE _currentPinState[16];
         RELAY_STATE _futuePinState[16];
-        int _translateRelayNumber(RELAY_NUM *relay);
+        unsigned short int _translateRelayNumber(RELAY_NUM *relay);
         Relay &_toggle(RELAY_NUM relay, RELAY_STATE state);
 
 };

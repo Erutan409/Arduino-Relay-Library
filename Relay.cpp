@@ -107,7 +107,7 @@ unsigned short int Relay::_translateRelayNumber(RELAY_NUM *relay) {
         case SIXTH_R: return 6;
         case SEVENTH_R: return 7;
         case EIGHTH_R: return 8;
-        case NINTH_R: return 9
+        case NINTH_R: return 9;
         case TENTH_R: return 10;
         case ELEVENTH_R: return 11;
         case TWELFTH_R: return 12;
