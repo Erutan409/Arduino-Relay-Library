@@ -95,31 +95,27 @@ void Relay::commit(void) {
 
 }
 
-int Relay::_translateRelayNumber(RELAY_NUM *relay) {
-
-    int num;
+unsigned short int Relay::_translateRelayNumber(RELAY_NUM *relay) {
 
     switch (*relay) {
 
-        case FIRST_R: num = 1; break;
-        case SECOND_R: num = 2; break;
-        case THIRD_R: num = 3; break;
-        case FOURTH_R: num = 4; break;
-        case FIFTH_R: num = 5; break;
-        case SIXTH_R: num = 6; break;
-        case SEVENTH_R: num = 7; break;
-        case EIGHTH_R: num = 8; break;
-        case NINTH_R: num = 9; break;
-        case TENTH_R: num = 10; break;
-        case ELEVENTH_R: num = 11; break;
-        case TWELFTH_R: num = 12; break;
-        case THIRTEENTH_R: num = 13; break;
-        case FOURTEENTH_R: num = 14; break;
-        case FIFTEENTH_R: num = 15; break;
-        case SIXTEENTH_R: num = 16; break;
+        case FIRST_R: return 1;
+        case SECOND_R: return 2;
+        case THIRD_R: return 3;
+        case FOURTH_R: return 4;
+        case FIFTH_R: return 5;
+        case SIXTH_R: return 6;
+        case SEVENTH_R: return 7;
+        case EIGHTH_R: return 8;
+        case NINTH_R: return 9
+        case TENTH_R: return 10;
+        case ELEVENTH_R: return 11;
+        case TWELFTH_R: return 12;
+        case THIRTEENTH_R: return 13;
+        case FOURTEENTH_R: return 14;
+        case FIFTEENTH_R: return 15;
+        case SIXTEENTH_R: return 16;
 
     }
-
-    return num;
 
 }
