@@ -33,8 +33,8 @@ Relay &Relay::setPin(int pinNumber, RELAY_NUM relay) {
     // don't allow any pin setting if alread initialized
     if (this->_initialized || this->_translateRelayNumber(&relay) > this->getSize()) {goto done;}
 
-    // ensure the pin mode is set for output
-    pinMode(pinNumber,OUTPUT);
+    // ensure the pin mode is set for input
+    pinMode(pinNumber,INPUT);
     //digitalWrite(pinNumber,HIGH);
     this->_pins[(this->_translateRelayNumber(&relay) - 1)] = pinNumber;
     // set default state for pin
