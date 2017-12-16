@@ -16,25 +16,55 @@ enum RELAY_STATE {
     ,RELAY_OFF = 0x00
 };
 
-class Relay {
+#ifdef RelaySafety
 
-    public:
-        Relay(RELAY_SIZE size);
-        RELAY_SIZE *getSize(void);
-        Relay &setPin(unsigned int pin, unsigned int relay);
-        int getRelayByPin(unsigned int pin);
-		int getPinByRelay(unsigned int relay);
-        Relay &on(unsigned int relay);
-        Relay &off(unsigned int relay);
-        void commit(void);
-        RELAY_STATE *getState(unsigned int relay);
+	class Relay {
 
-    private:
-        RELAY_SIZE _size;
-        int _pins[16] = {0};
-		RELAY_STATE _currentPinState[16] = {RELAY_OFF};
-		RELAY_STATE _futurePinState[16] = {RELAY_OFF};
+		public:
+			Relay(RELAY_SIZE size);
+			RELAY_SIZE *getSize(void);
+			Relay &setPin(unsigned int pin, unsigned int relay);
+			int getRelayByPin(unsigned int pin);
+			int getPinByRelay(unsigned int relay);
+			Relay &on(unsigned int relay);
+			Relay &off(unsigned int relay);
+			void commit(void);
+			RELAY_STATE *getState(unsigned int relay);
 
-};
+		private:
+			RELAY_SIZE _size;
+			int _pins[16] = { 0 };
+			RELAY_STATE _currentPinState[16] = { RELAY_OFF };
+			RELAY_STATE _futurePinState[16] = { RELAY_OFF };
+			unsigned long _lastToggle[16] = { 0 };
+			unsigned long _getSafety(void);
+			bool _check(unsigned int relay);
+
+	};
+
+#else
+
+	class Relay {
+
+		public:
+			Relay(RELAY_SIZE size);
+			RELAY_SIZE *getSize(void);
+			Relay &setPin(unsigned int pin, unsigned int relay);
+			int getRelayByPin(unsigned int pin);
+			int getPinByRelay(unsigned int relay);
+			Relay &on(unsigned int relay);
+			Relay &off(unsigned int relay);
+			void commit(void);
+			RELAY_STATE *getState(unsigned int relay);
+
+		private:
+			RELAY_SIZE _size;
+			int _pins[16] = { 0 };
+			RELAY_STATE _currentPinState[16] = { RELAY_OFF };
+			RELAY_STATE _futurePinState[16] = { RELAY_OFF };
+
+	};
+
+#endif // RelaySafety
 
 #endif
