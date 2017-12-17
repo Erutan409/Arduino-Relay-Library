@@ -1,8 +1,9 @@
 #include <Arduino.h>
 #include <Relay.h>
+#include <Avail.h>
 
 Relay::Relay(RELAY_SIZE size) {
-    this->_size = size;
+	this->_size = size;
 }
 
 RELAY_SIZE *Relay::getSize(void) {
@@ -37,18 +38,34 @@ Relay &Relay::off(unsigned int relay) {
 	return *this;
 }
 
-void Relay::commit(void) {
+Relay &Relay::toggle(unsigned int relay) {
+	if (*this->getState(relay) == RELAY_OFF) {
+		return this->on(relay);
+	} else {
+		return this->off(relay);
+	}
+}
+
+Relay &Relay::commit(void) {
 	for (unsigned short int i = 0; i < *this->getSize(); i++) {
 		RELAY_STATE &c = this->_currentPinState[i];
 		RELAY_STATE &f = this->_futurePinState[i];
+		unsigned long *l = &this->_lastToggle[i];
 
-		if (c != f) {
+		if (c != f && avail(&this->_safety, l)) {
 			c = f;
+			*l = millis();
 			digitalWrite(this->_pins[i], (c == RELAY_ON ? LOW : HIGH));
 		}
 	}
+
+	return *this;
 }
 
 RELAY_STATE *Relay::getState(unsigned int relay) {
 	return &this->_currentPinState[relay - 1];
+}
+
+Relay &Relay::setSafety(unsigned long safety) {
+	this->_safety = max(safety, 250);
 }
