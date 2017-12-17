@@ -52,7 +52,7 @@ Relay &Relay::commit(void) {
 		RELAY_STATE &f = this->_futurePinState[i];
 		unsigned long *l = &this->_lastToggle[i];
 
-		if (c != f && avail(&this->_safety, l) == true) {
+		if (c != f && avail(&this->_safety, l)) {
 			c = f;
 			*l = millis();
 			digitalWrite(this->_pins[i], (c == RELAY_ON ? LOW : HIGH));
