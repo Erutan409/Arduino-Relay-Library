@@ -1,4 +1,4 @@
-# Arduino-Relay-Library
+# Arduino Relay Library
 
 A way to simplify controlling a relay module board.
 
