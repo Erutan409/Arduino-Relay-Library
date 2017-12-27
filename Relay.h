@@ -21,23 +21,23 @@ class Relay {
 	public:
 		Relay(RELAY_SIZE size);
 		RELAY_SIZE *getSize(void);
-		Relay &setPin(unsigned int pin, unsigned int relay);
-		int getRelayByPin(unsigned int pin);
-		int getPinByRelay(unsigned int relay);
-		Relay &on(unsigned int relay);
-		Relay &off(unsigned int relay);
-		Relay &toggle(unsigned int relay);
+		Relay &setPin(uint8_t pin, uint8_t relay);
+		uint8_t getRelayByPin(uint8_t pin);
+		uint8_t getPinByRelay(uint8_t relay);
+		Relay &on(uint8_t relay);
+		Relay &off(uint8_t relay);
+		Relay &toggle(uint8_t relay);
 		Relay &commit(void);
-		RELAY_STATE *getState(unsigned int relay);
-		Relay &setSafety(unsigned long safety);
+		RELAY_STATE *getState(uint8_t relay);
+		Relay &setSafety(uint32_t safety);
 
 	private:
 		RELAY_SIZE _size;
-		int _pins[16] = { 0 };
+		uint8_t _pins[16] = { 0 };
 		RELAY_STATE _currentPinState[16] = { RELAY_OFF };
 		RELAY_STATE _futurePinState[16] = { RELAY_OFF };
-		unsigned long _lastToggle[16] = { 0 };
-		unsigned long _safety = 250;
+		uint32_t _lastToggle[16] = { 0 };
+		uint32_t _safety = 250;
 
 };
 
