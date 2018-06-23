@@ -2,6 +2,12 @@
 #define RELAY_H
 
 #include <Arduino.h>
+#include "RelayConfig.h"
+
+#if RELAY_SAFETY == true
+#include <Avail.h>
+#endif // RELAY_SAFETY == true
+
 
 enum RELAY_STATE {
 	RELAY_ON   = 0x01,
@@ -16,13 +22,18 @@ class Relay {
 		Relay &off(void);
 		Relay &toggle(void);
 		RELAY_STATE *getState(void);
-		Relay &setSafety(uint32_t safety);
 
+#if RELAY_SAFETY == true
+		Relay &setSafety(uint32_t safety);
+#endif // RELAY_SAFETY == true
+		
 	private:
 		uint8_t _pin;
 		RELAY_STATE _currentState = RELAY_OFF;
-		uint32_t _safety = 250;
+#if RELAY_SAFETY == true
 		uint32_t _lastToggle = 0;
+		uint32_t _safety = 250;
+#endif // RELAY_SAFETY == true
 
 };
 

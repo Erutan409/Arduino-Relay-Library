@@ -1,6 +1,10 @@
-#include <Arduino.h>
 #include <Relay.h>
+#include "RelayConfig.h"
+
+#if RELAY_SAFETY == true
 #include <Avail.h>
+#endif // RELAY_SAFETY == true
+
 
 Relay::Relay(uint8_t pin) {
 	this->_pin = pin;
@@ -10,6 +14,8 @@ Relay::Relay(uint8_t pin) {
 
 Relay &Relay::on(void) {
 	RELAY_STATE &state = this->_currentState;
+
+#if RELAY_SAFETY == true
 	uint32_t *safety = &this->_safety;
 	uint32_t *last = &this->_lastToggle;
 
@@ -18,12 +24,20 @@ Relay &Relay::on(void) {
 		digitalWrite(this->_pin, LOW);
 		state = RELAY_ON;
 	}
+#else
+	if (state != RELAY_ON) {
+		digitalWrite(this->_pin, LOW);
+		state = RELAY_ON;
+	}
+#endif // RELAY_SAFETY
 
 	return *this;
 }
 
 Relay &Relay::off(void) {
 	RELAY_STATE &state = this->_currentState;
+
+#if RELAY_SAFETY == true
 	uint32_t *safety = &this->_safety;
 	uint32_t *last = &this->_lastToggle;
 
@@ -32,6 +46,12 @@ Relay &Relay::off(void) {
 		digitalWrite(this->_pin, HIGH);
 		state = RELAY_OFF;
 	}
+#else
+	if (state != RELAY_OFF) {
+		digitalWrite(this->_pin, HIGH);
+		state = RELAY_OFF;
+	}
+#endif // RELAY_SAFETY
 
 	return *this;
 }
@@ -48,6 +68,10 @@ RELAY_STATE *Relay::getState() {
 	return &this->_currentState;
 }
 
+#if RELAY_SAFETY == true
 Relay &Relay::setSafety(uint32_t safety) {
 	this->_safety = max(safety, 250);
+
+	return *this;
 }
+#endif // RELAY_SAFETY == true
