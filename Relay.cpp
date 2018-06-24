@@ -1,71 +1,77 @@
-#include <Arduino.h>
 #include <Relay.h>
+#include "RelayConfig.h"
+
+#if RELAY_SAFETY == true
 #include <Avail.h>
+#endif // RELAY_SAFETY == true
 
-Relay::Relay(RELAY_SIZE size) {
-	this->_size = size;
-}
 
-RELAY_SIZE *Relay::getSize(void) {
-	return &this->_size;
-}
-
-Relay &Relay::setPin(uint8_t pin, uint8_t relay) {
-	this->_pins[relay - 1] = pin;
+Relay::Relay(uint8_t pin) {
+	this->_pin = pin;
 	pinMode(pin, OUTPUT);
 	digitalWrite(pin, HIGH);
-	return *this;
 }
 
-uint8_t Relay::getRelayByPin(uint8_t pin) {
-	for (uint8_t i = 0; i < *this->getSize(); i++) {
-		if (this->_pins[i] == pin) { return i + 1; }
+Relay &Relay::on(void) {
+	RELAY_STATE &state = this->_currentState;
+
+#if RELAY_SAFETY == true
+	uint32_t *safety = &this->_safety;
+	uint32_t *last = &this->_lastToggle;
+
+	if (state != RELAY_ON && Avail::millis(safety, last)) {
+		*last = millis();
+		digitalWrite(this->_pin, LOW);
+		state = RELAY_ON;
 	}
-	return 0;
-}
+#else
+	if (state != RELAY_ON) {
+		digitalWrite(this->_pin, LOW);
+		state = RELAY_ON;
+	}
+#endif // RELAY_SAFETY
 
-uint8_t Relay::getPinByRelay(uint8_t relay) {
-	return &this->_pins[relay - 1];
-}
-
-Relay &Relay::on(uint8_t relay) {
-	this->_futurePinState[relay - 1] = RELAY_ON;
 	return *this;
 }
 
-Relay &Relay::off(uint8_t relay) {
-	this->_futurePinState[relay - 1] = RELAY_OFF;
+Relay &Relay::off(void) {
+	RELAY_STATE &state = this->_currentState;
+
+#if RELAY_SAFETY == true
+	uint32_t *safety = &this->_safety;
+	uint32_t *last = &this->_lastToggle;
+
+	if (state != RELAY_OFF && Avail::millis(safety, last)) {
+		*last = millis();
+		digitalWrite(this->_pin, HIGH);
+		state = RELAY_OFF;
+	}
+#else
+	if (state != RELAY_OFF) {
+		digitalWrite(this->_pin, HIGH);
+		state = RELAY_OFF;
+	}
+#endif // RELAY_SAFETY
+
 	return *this;
 }
 
-Relay &Relay::toggle(uint8_t relay) {
-	if (*this->getState(relay) == RELAY_OFF) {
-		return this->on(relay);
+Relay &Relay::toggle(void) {
+	if (*this->getState() == RELAY_OFF) {
+		return this->on();
 	} else {
-		return this->off(relay);
+		return this->off();
 	}
 }
 
-Relay &Relay::commit(void) {
-	for (uint8_t i = 0; i < *this->getSize(); i++) {
-		RELAY_STATE &c = this->_currentPinState[i];
-		RELAY_STATE &f = this->_futurePinState[i];
-		uint32_t *l = &this->_lastToggle[i];
-
-		if (c != f && Avail::millis(&this->_safety, l)) {
-			c = f;
-			*l = millis();
-			digitalWrite(this->_pins[i], (c == RELAY_ON ? LOW : HIGH));
-		}
-	}
-
-	return *this;
+RELAY_STATE *Relay::getState() {
+	return &this->_currentState;
 }
 
-RELAY_STATE *Relay::getState(uint8_t relay) {
-	return &this->_currentPinState[relay - 1];
-}
-
+#if RELAY_SAFETY == true
 Relay &Relay::setSafety(uint32_t safety) {
 	this->_safety = max(safety, 250);
+
+	return *this;
 }
+#endif // RELAY_SAFETY == true

@@ -7,25 +7,22 @@ Example:
 ```c++
 #include <Relay.h>
     
-Relay relay(FOUR_RELAY);
-    
 #define relayOne 2 // the actual pin number
+    
+Relay relay(relayOne);
     
 void setup()
 {
-    relay.setPin(relayOne, 1);
+    // prevent toggling more than once every 500 microseconds
+    relay.setSafety(500);
 }
     
 void loop()
 {
-    delay(3000);
-    
-    if (*relay.getState(relay.getRelayByPin(relayOne)) == RELAY_ON) {
-        relay.off(relay.getRelayByPin(relayOne));
-    } else {
-        relay.on(relay.getRelayByPin(relayOne));
-    }
-    
-    relay.commit();
+    // toggle every half second while not interrupting entire program
+    relay.toggle();
 }
 ```
+
+#### RelayConfig.h
+The safety machinsm can be disabled by setting RELAY_SAFETY to `false` in the aforementioned configuration file.  This will also use less memory for the compiled application.
